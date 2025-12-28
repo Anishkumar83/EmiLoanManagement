@@ -9,7 +9,7 @@ public class Emi {
     private double emiAmount;
     private double interest_component;
     private double principal_component;
-    private double outstanding_component;
+    private double outstanding_balance;
     private LocalDate dueDate;
     private String status;
 
@@ -33,22 +33,22 @@ public class Emi {
         this.principal_component = principal_component;
     }
 
-    public double getOutstanding_component() {
-        return outstanding_component;
+    public double getOutstanding_balance() {
+        return outstanding_balance;
     }
 
-    public void setOutstanding_component(double outstanding_component) {
-        this.outstanding_component = outstanding_component;
+    public void setOutstanding_balance(double outstanding_balance) {
+        this.outstanding_balance = outstanding_balance;
     }
 
     public Emi(long emiId, long loanId, double emiAmount, double interest_component,
-               double principal_component, double outstanding_component, LocalDate dueDate, String status) {
+               double principal_component, double outstanding_balance, LocalDate dueDate, String status) {
         this.emiId = emiId;
         this.loanId = loanId;
         this.emiAmount = emiAmount;
         this.interest_component = interest_component;
         this.principal_component = principal_component;
-        this.outstanding_component = outstanding_component;
+        this.outstanding_balance = outstanding_balance;
         this.dueDate = dueDate;
         this.status = status;
     }

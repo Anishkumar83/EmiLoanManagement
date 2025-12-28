@@ -20,7 +20,7 @@ public class DbConnection {
     private static String jdbcURL
             = "jdbc:postgresql://localhost:5432/emidb";
     private static String username = "postgres";
-    private static String password = "root";
+    private static String password = "Anish";
 
     public DbConnection() {
     }
