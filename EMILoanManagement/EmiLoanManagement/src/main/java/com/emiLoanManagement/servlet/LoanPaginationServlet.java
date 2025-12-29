@@ -1,4 +1,4 @@
-package com.emiLoanManagement.servlet;
+  package com.emiLoanManagement.servlet;
 
 import com.emiLoanManagement.dao.LoanDao;
 import com.emiLoanManagement.model.Loan;
@@ -17,6 +17,7 @@ import java.util.Map;
 @WebServlet("/loans")
 public class LoanPaginationServlet extends HttpServlet {
 
+    private static final long serialVersionUID= 3L;
     private final ObjectMapper mapper = new ObjectMapper();
     private final LoanDao loanDao = new LoanDao();
 

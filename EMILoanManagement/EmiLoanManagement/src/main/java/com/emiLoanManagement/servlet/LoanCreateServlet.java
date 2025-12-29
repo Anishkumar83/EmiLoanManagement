@@ -6,6 +6,8 @@ import com.emiLoanManagement.model.Emi;
 import com.emiLoanManagement.model.Loan;
 import com.emiLoanManagement.util.DbConnection;
 import com.emiLoanManagement.util.EmiCalculator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,123 +23,151 @@ import java.time.LocalDate;
 @WebServlet("/create")
 public class LoanCreateServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
     private static final int SCALE = 2;
+
+    private static final Logger log =
+            LoggerFactory.getLogger(LoanCreateServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest req,
                           HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Connection con = null;
+        log.info("Loan creation request received");
 
-        try {
-            String pStr = req.getParameter("principal");
-            String rStr = req.getParameter("rate");
-            String mStr = req.getParameter("months");
+        try (Connection con = DbConnection.dbConnect()) {
 
-            if (pStr == null || rStr == null || mStr == null) {
-                throw new IllegalArgumentException("Missing request parameters");
-            }
-
-            BigDecimal principal = new BigDecimal(pStr).setScale(SCALE, RoundingMode.HALF_UP);
-            BigDecimal annualRate = new BigDecimal(rStr);
-            int months = Integer.parseInt(mStr);
-
-            if (principal.compareTo(BigDecimal.ZERO) <= 0 ||
-                    annualRate.compareTo(BigDecimal.ZERO) < 0 ||
-                    months <= 0) {
-                throw new IllegalArgumentException("Invalid loan inputs");
-            }
-
-
-            Loan loan = new Loan();
-            loan.setPrincipal(principal.doubleValue());
-            loan.setInterestRate(annualRate.doubleValue());
-            loan.setTenureMonths(months);
-
-
-            con = DbConnection.dbConnect();
             con.setAutoCommit(false);
 
-            LoanDao loanDao = new LoanDao();
-            EmiDao emiDao = new EmiDao();
+            BigDecimal principal = readPrincipal(req);
+            BigDecimal rate = readRate(req);
+            int months = readMonths(req);
 
+            validateLoanInputs(principal, rate, months);
 
-            loanDao.createLoan(con, loan);
-            long loanId = loan.getLoanId();
-
-            if (loanId <= 0) {
-                throw new IllegalStateException("Loan ID not generated");
-            }
-
-
-            BigDecimal emiAmount = EmiCalculator.calculateEmi(
-                    principal, annualRate, months
-            );
-
-            BigDecimal balance = principal;
-            BigDecimal monthlyRate =
-                    annualRate.divide(BigDecimal.valueOf(1200),
-                            10, RoundingMode.HALF_UP);
-
-            LocalDate dueDate = LocalDate.now().plusMonths(1);
-
-
-            for (int month = 1; month <= months; month++) {
-
-                BigDecimal interest = balance.multiply(monthlyRate)
-                        .setScale(SCALE, RoundingMode.HALF_UP);
-
-                BigDecimal principalPaid = emiAmount.subtract(interest)
-                        .setScale(SCALE, RoundingMode.HALF_UP);
-
-
-                if (month == months) {
-                    principalPaid = balance;
-                    emiAmount = interest.add(balance)
-                            .setScale(SCALE, RoundingMode.HALF_UP);
-                    balance = BigDecimal.ZERO;
-                } else {
-                    balance = balance.subtract(principalPaid)
-                            .setScale(SCALE, RoundingMode.HALF_UP);
-                }
-
-                Emi emi = new Emi();
-                emi.setLoanId(loanId);
-                emi.setEmiAmount(emiAmount.doubleValue());
-                emi.setInterest_component(interest.doubleValue());
-                emi.setPrincipal_component(principalPaid.doubleValue());
-                emi.setOutstanding_balance(balance.doubleValue());
-                emi.setDueDate(dueDate);
-                emi.setStatus("PENDING");
-
-                emiDao.saveEmi(con, emi);
-
-                dueDate = dueDate.plusMonths(1);
-            }
-
+            long loanId = createLoan(con, principal, rate, months);
+            createEmiSchedule(con, loanId, principal, rate, months);
 
             con.commit();
 
-            resp.setContentType("text/plain");
-            resp.getWriter().println(
-                    "Loan & EMI schedule created successfully. Loan ID = " + loanId
-            );
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            resp.getWriter().write("Loan created successfully. LoanId=" + loanId);
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid request: {}", e.getMessage());
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 
         } catch (Exception e) {
-            try {
-                if (con != null) con.rollback();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            throw new ServletException(e);
+            log.error("Loan creation failed", e);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Failed to create loan");
+        }
+    }
 
-        } finally {
-            try {
-                if (con != null) con.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
+
+    private BigDecimal readPrincipal(HttpServletRequest req) {
+        String value = req.getParameter("principal");
+        if (value == null) {
+            throw new IllegalArgumentException("Missing principal");
+        }
+        return new BigDecimal(value).setScale(SCALE, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal readRate(HttpServletRequest req) {
+        String value = req.getParameter("rate");
+        if (value == null) {
+            throw new IllegalArgumentException("Missing rate");
+        }
+        return new BigDecimal(value);
+    }
+
+    private int readMonths(HttpServletRequest req) {
+        String value = req.getParameter("months");
+        if (value == null) {
+            throw new IllegalArgumentException("Missing months");
+        }
+        return Integer.parseInt(value);
+    }
+
+
+    private void validateLoanInputs(BigDecimal principal,
+                                    BigDecimal rate,
+                                    int months) {
+
+        if (principal.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Principal must be positive");
+        }
+        if (rate.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Rate cannot be negative");
+        }
+        if (months <= 0) {
+            throw new IllegalArgumentException("Months must be positive");
+        }
+    }
+
+
+
+    private long createLoan(Connection con,
+                            BigDecimal principal,
+                            BigDecimal rate,
+                            int months) {
+
+        Loan loan = new Loan();
+        loan.setPrincipal(principal.doubleValue());
+        loan.setInterestRate(rate.doubleValue());
+        loan.setTenureMonths(months);
+
+        LoanDao loanDao = new LoanDao();
+        loanDao.createLoan(con, loan);
+
+        log.info("Loan created with loanId={}", loan.getLoanId());
+        return loan.getLoanId();
+    }
+
+
+
+    private void createEmiSchedule(Connection con,
+                                   long loanId,
+                                   BigDecimal principal,
+                                   BigDecimal rate,
+                                   int months) {
+
+        EmiDao emiDao = new EmiDao();
+
+        BigDecimal emiAmount =
+                EmiCalculator.calculateEmi(principal, rate, months);
+
+        BigDecimal balance = principal;
+        BigDecimal monthlyRate =
+                rate.divide(BigDecimal.valueOf(1200),
+                        10, RoundingMode.HALF_UP);
+
+        LocalDate dueDate = LocalDate.now().plusMonths(1);
+
+        for (int i = 1; i <= months; i++) {
+
+            BigDecimal interest = balance.multiply(monthlyRate)
+                    .setScale(SCALE, RoundingMode.HALF_UP);
+
+            BigDecimal principalPaid = emiAmount.subtract(interest)
+                    .setScale(SCALE, RoundingMode.HALF_UP);
+
+            balance = balance.subtract(principalPaid)
+                    .max(BigDecimal.ZERO);
+
+            Emi emi = new Emi();
+            emi.setLoanId(loanId);
+            emi.setEmiAmount(emiAmount.doubleValue());
+            emi.setInterest_component(interest.doubleValue());
+            emi.setPrincipal_component(principalPaid.doubleValue());
+            emi.setOutstanding_balance(balance.doubleValue());
+            emi.setDueDate(dueDate);
+            emi.setStatus("PENDING");
+
+            emiDao.saveEmi(con, emi);
+            dueDate = dueDate.plusMonths(1);
         }
     }
 }

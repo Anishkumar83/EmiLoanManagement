@@ -1,27 +1,42 @@
 package com.emiLoanManagement.dao;
 
+import com.emiLoanManagement.exceptions.LoanPersistenceException;
 import com.emiLoanManagement.model.Loan;
 import com.emiLoanManagement.util.DbConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LoanDao {
 
+    private static final Logger logger = LoggerFactory.getLogger(LoanDao.class);
+
+    public static final int PRINCIPAL_IDX=1;
+    public static final int INTEREST_RATE_IDX=2;
+    public static final int MONTHS_IDX=3;
+
     public void createLoan(Connection con, Loan loan) {
+
 
         String sql = """
                 INSERT INTO loan (principal, interest_rate, tenure_months)
                 VALUES (?, ?, ?)
                 """;
 
+        logger.debug("Inserting into the db");
         try (PreparedStatement ps =
                      con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setDouble(1, loan.getPrincipal());
-            ps.setDouble(2, loan.getInterestRate());
-            ps.setInt(3, loan.getTenureMonths());
+            ps.setDouble(PRINCIPAL_IDX, loan.getPrincipal());
+            ps.setDouble(INTEREST_RATE_IDX, loan.getInterestRate());
+            ps.setInt(MONTHS_IDX, loan.getTenureMonths());
 
             ps.executeUpdate();
 
@@ -32,9 +47,13 @@ public class LoanDao {
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to insert loan", e);
+            logger.error("failed to insert loan");
+            throw new LoanPersistenceException("Failed to insert loan", e);
         }
     }
+
+    public static final int SIZE_IDX=1;
+    public static final int OFFSET_IDX=2;
 
     public List<Loan> getLoansPaginated(int page, int size) {
 
@@ -52,8 +71,8 @@ public class LoanDao {
         try (Connection con = DbConnection.dbConnect();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, size);
-            ps.setInt(2, offset);
+            ps.setInt(SIZE_IDX, size);
+            ps.setInt(OFFSET_IDX, offset);
 
             ResultSet rs = ps.executeQuery();
 
