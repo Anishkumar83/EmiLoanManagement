@@ -31,9 +31,6 @@ public class LoanCreateServlet extends HttpServlet {
         Connection con = null;
 
         try {
-            /* ===============================
-               1️⃣ Read & validate request params
-            =============================== */
             String pStr = req.getParameter("principal");
             String rStr = req.getParameter("rate");
             String mStr = req.getParameter("months");
@@ -52,26 +49,20 @@ public class LoanCreateServlet extends HttpServlet {
                 throw new IllegalArgumentException("Invalid loan inputs");
             }
 
-            /* ===============================
-               2️⃣ Create Loan entity
-            =============================== */
+
             Loan loan = new Loan();
             loan.setPrincipal(principal.doubleValue());
             loan.setInterestRate(annualRate.doubleValue());
             loan.setTenureMonths(months);
 
-            /* ===============================
-               3️⃣ DB connection + transaction
-            =============================== */
+
             con = DbConnection.dbConnect();
             con.setAutoCommit(false);
 
             LoanDao loanDao = new LoanDao();
             EmiDao emiDao = new EmiDao();
 
-            /* ===============================
-               4️⃣ Insert Loan (auto loan_id)
-            =============================== */
+
             loanDao.createLoan(con, loan);
             long loanId = loan.getLoanId();
 
@@ -79,9 +70,7 @@ public class LoanCreateServlet extends HttpServlet {
                 throw new IllegalStateException("Loan ID not generated");
             }
 
-            /* ===============================
-               5️⃣ EMI calculation (BigDecimal)
-            =============================== */
+
             BigDecimal emiAmount = EmiCalculator.calculateEmi(
                     principal, annualRate, months
             );
@@ -93,9 +82,7 @@ public class LoanCreateServlet extends HttpServlet {
 
             LocalDate dueDate = LocalDate.now().plusMonths(1);
 
-            /* ===============================
-               6️⃣ Generate EMI Schedule
-            =============================== */
+
             for (int month = 1; month <= months; month++) {
 
                 BigDecimal interest = balance.multiply(monthlyRate)
@@ -104,7 +91,7 @@ public class LoanCreateServlet extends HttpServlet {
                 BigDecimal principalPaid = emiAmount.subtract(interest)
                         .setScale(SCALE, RoundingMode.HALF_UP);
 
-                // 🔥 Last EMI adjustment
+
                 if (month == months) {
                     principalPaid = balance;
                     emiAmount = interest.add(balance)
@@ -129,9 +116,7 @@ public class LoanCreateServlet extends HttpServlet {
                 dueDate = dueDate.plusMonths(1);
             }
 
-            /* ===============================
-               7️⃣ Commit transaction
-            =============================== */
+
             con.commit();
 
             resp.setContentType("text/plain");

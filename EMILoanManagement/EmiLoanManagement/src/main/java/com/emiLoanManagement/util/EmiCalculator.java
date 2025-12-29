@@ -8,12 +8,7 @@ public class EmiCalculator {
 
     private static final int SCALE = 2;
 
-    /**
-     * @param principal     Loan amount
-     * @param annualRate    Annual interest rate (e.g. 8 for 8%)
-     * @param tenureMonths  Total tenure in months
-     * @return EMI amount (BigDecimal)
-     */
+
     public static BigDecimal calculateEmi(BigDecimal principal,
                                           BigDecimal annualRate,
                                           int tenureMonths) {

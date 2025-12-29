@@ -11,6 +11,6 @@ public class EmiPaymentServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long emiId = Long.parseLong(req.getParameter("emailId"));
 
-            
+
     }
 }
