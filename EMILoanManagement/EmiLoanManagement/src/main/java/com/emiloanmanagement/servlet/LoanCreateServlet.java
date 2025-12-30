@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 @WebServlet("/create")
 public class LoanCreateServlet extends HttpServlet {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final int SCALE = 2;
 
@@ -40,13 +42,14 @@ public class LoanCreateServlet extends HttpServlet {
 
             con.setAutoCommit(false);
 
+            long customer_id= Long.parseLong(req.getParameter("cus_id"));
             BigDecimal principal = readPrincipal(req);
             BigDecimal rate = readRate(req);
             int months = readMonths(req);
 
-            validateLoanInputs(principal, rate, months);
+            validateLoanInputs(customer_id,principal, rate, months);
 
-            long loanId = createLoan(con, principal, rate, months);
+            long loanId = createLoan(con, customer_id,principal, rate, months);
             createEmiSchedule(con, loanId, principal, rate, months);
 
             con.commit();
@@ -92,10 +95,13 @@ public class LoanCreateServlet extends HttpServlet {
     }
 
 
-    private void validateLoanInputs(BigDecimal principal,
+    private void validateLoanInputs(Long cus_id,BigDecimal principal,
                                     BigDecimal rate,
                                     int months) {
 
+        if(cus_id <= 0 ){
+            throw new IllegalArgumentException("customer id must be positive");
+        }
         if (principal.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Principal must be positive");
         }
@@ -110,11 +116,13 @@ public class LoanCreateServlet extends HttpServlet {
 
 
     private long createLoan(Connection con,
+                            long customer_id,
                             BigDecimal principal,
                             BigDecimal rate,
                             int months) {
 
         Loan loan = new Loan();
+        loan.setCustomer_id(customer_id);
         loan.setPrincipal(principal.doubleValue());
         loan.setInterestRate(rate.doubleValue());
         loan.setTenureMonths(months);

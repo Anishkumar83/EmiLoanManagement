@@ -3,10 +3,7 @@ package com.emiloanmanagement.dao;
 import com.emiloanmanagement.model.Customers;
 import com.emiloanmanagement.util.DbConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,5 +83,63 @@ public class CustomerDao {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public Customers findByID(Connection con, Long id){
+        String sql= """
+                SELECT customer_id, customer_name, email, dob, gender
+                FROM customers
+                WHERE customer_id =?
+                """;
+
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setLong(1,id);
+
+            ResultSet rs= ps.executeQuery();
+            if(rs.next()){
+                Customers customer= new Customers();
+
+                customer.setCustomer_id(rs.getLong("customer_id"));
+                customer.setCustomer_name(rs.getString("customer_name"));
+                customer.setEmail(rs.getString("email"));
+                customer.setDob(rs.getDate("dob"));
+                customer.setGender(rs.getString("gender"));
+                return customer;
+            }
+
+        }catch (Exception e){
+            throw new RuntimeException("Failed to fetch data of id "+id);
+        }
+        return null;
+    }
+
+    public boolean updateCustomerById(Connection con, long id, String name, String email, Date dob, String gender){
+        Customers existingCustomer = findByID(con,id);
+
+        if(existingCustomer == null){
+            return false;
+        }
+
+        String sql = """
+                UPDATE customers
+                SET customer_name=?,
+                    email=?,
+                    dob=?,
+                    gender=?
+                WHERE customer_id=?
+                """;
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setString(1,name);
+            ps.setString(2, email);
+            ps.setDate(3, dob);
+            ps.setString(4, gender);
+            ps.setLong(5,id);
+            ps.executeUpdate();
+            return true;
+        }catch (Exception e){
+            throw new RuntimeException("Failed to update a customer for an id");
+        }
+
+
     }
 }

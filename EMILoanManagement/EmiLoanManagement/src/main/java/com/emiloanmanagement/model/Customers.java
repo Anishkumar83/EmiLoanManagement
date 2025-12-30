@@ -4,7 +4,7 @@ package com.emiloanmanagement.model;
 import java.sql.Date;
 
 public class Customers {
-    private int customer_id;
+    private long customer_id;
     private String customer_name;
     private String email;
     private Date dob;
@@ -21,11 +21,11 @@ public class Customers {
         this.gender = gender;
     }
 
-    public int getCustomer_id() {
+    public long getCustomer_id() {
         return customer_id;
     }
 
-    public void setCustomer_id(int customer_id) {
+    public void setCustomer_id(long customer_id) {
         this.customer_id = customer_id;
     }
 

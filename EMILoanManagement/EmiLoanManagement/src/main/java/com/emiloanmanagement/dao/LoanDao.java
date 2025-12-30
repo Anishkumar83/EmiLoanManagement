@@ -18,22 +18,24 @@ public class LoanDao {
 
     private static final Logger logger = LoggerFactory.getLogger(LoanDao.class);
 
-    public static final int PRINCIPAL_IDX=1;
-    public static final int INTEREST_RATE_IDX=2;
-    public static final int MONTHS_IDX=3;
+    public static final int CUSTOMER_ID_IDX=1;
+    public static final int PRINCIPAL_IDX=2;
+    public static final int INTEREST_RATE_IDX=3;
+    public static final int MONTHS_IDX=4;
 
     public void createLoan(Connection con, Loan loan) {
 
 
         String sql = """
-                INSERT INTO loan (principal, interest_rate, tenure_months)
-                VALUES (?, ?, ?)
+                INSERT INTO loan (customer_id,principal, interest_rate, tenure_months)
+                VALUES (?, ?, ?,?)
                 """;
 
         logger.debug("Inserting into the db");
         try (PreparedStatement ps =
                      con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
+            ps.setLong(CUSTOMER_ID_IDX,loan.getCustomer_id());
             ps.setDouble(PRINCIPAL_IDX, loan.getPrincipal());
             ps.setDouble(INTEREST_RATE_IDX, loan.getInterestRate());
             ps.setInt(MONTHS_IDX, loan.getTenureMonths());
