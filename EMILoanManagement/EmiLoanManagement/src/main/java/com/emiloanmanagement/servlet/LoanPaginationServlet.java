@@ -1,7 +1,7 @@
-  package com.emiLoanManagement.servlet;
+  package com.emiloanmanagement.servlet;
 
-import com.emiLoanManagement.dao.LoanDao;
-import com.emiLoanManagement.model.Loan;
+import com.emiloanmanagement.dao.LoanDao;
+import com.emiloanmanagement.model.Loan;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.ServletException;
@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.Map;
 @WebServlet("/loans")
 public class LoanPaginationServlet extends HttpServlet {
 
+    @Serial
     private static final long serialVersionUID= 3L;
     private final ObjectMapper mapper = new ObjectMapper();
     private final LoanDao loanDao = new LoanDao();

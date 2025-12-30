@@ -1,4 +1,4 @@
-package com.emiLoanManagement.util;
+package com.emiloanmanagement.util;
 
 import org.junit.jupiter.api.Test;
 

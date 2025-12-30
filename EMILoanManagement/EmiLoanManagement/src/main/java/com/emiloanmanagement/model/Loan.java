@@ -1,4 +1,4 @@
-package com.emiLoanManagement.model;
+package com.emiloanmanagement.model;
 
 public class Loan {
     private long loanId;

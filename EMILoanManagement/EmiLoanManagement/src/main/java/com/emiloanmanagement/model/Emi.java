@@ -1,4 +1,4 @@
-package com.emiLoanManagement.model;
+package com.emiloanmanagement.model;
 
 import java.time.LocalDate;
 

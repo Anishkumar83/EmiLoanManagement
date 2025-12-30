@@ -1,11 +1,11 @@
-package com.emiLoanManagement.servlet;
+package com.emiloanmanagement.servlet;
 
-import com.emiLoanManagement.dao.EmiDao;
-import com.emiLoanManagement.dao.LoanDao;
-import com.emiLoanManagement.model.Emi;
-import com.emiLoanManagement.model.Loan;
-import com.emiLoanManagement.util.DbConnection;
-import com.emiLoanManagement.util.EmiCalculator;
+import com.emiloanmanagement.dao.EmiDao;
+import com.emiloanmanagement.dao.LoanDao;
+import com.emiloanmanagement.model.Emi;
+import com.emiloanmanagement.model.Loan;
+import com.emiloanmanagement.util.DbConnection;
+import com.emiloanmanagement.util.EmiCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

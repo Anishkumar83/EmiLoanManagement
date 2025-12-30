@@ -1,8 +1,8 @@
-package com.emiLoanManagement.dao;
+package com.emiloanmanagement.dao;
 
-import com.emiLoanManagement.exceptions.EmiPersistenceException;
-import com.emiLoanManagement.model.Emi;
-import com.emiLoanManagement.util.DbConnection;
+import com.emiloanmanagement.exceptions.EmiPersistenceException;
+import com.emiloanmanagement.model.Emi;
+import com.emiloanmanagement.util.DbConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

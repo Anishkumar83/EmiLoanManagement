@@ -1,6 +1,6 @@
-package com.emiLoanManagement.servlet;
+package com.emiloanmanagement.servlet;
 
-import com.emiLoanManagement.dao.EmiDao;
+import com.emiloanmanagement.dao.EmiDao;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

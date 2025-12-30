@@ -1,4 +1,4 @@
-package com.emiLoanManagement.exceptions;
+package com.emiloanmanagement.exceptions;
 
 public class LoanPersistenceException extends RuntimeException{
 
