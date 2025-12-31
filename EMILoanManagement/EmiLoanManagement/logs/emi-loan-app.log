@@ -1,0 +1,33 @@
+2025-12-31 15:12:02 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:12:02 ERROR com.emiloanmanagement.dao.CustomerDao - Failed to save customer data
+2025-12-31 15:12:02 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:12:02 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:12:02 INFO  com.emiloanmanagement.dao.CustomerDao - Customer stored successfully
+2025-12-31 15:12:37 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:12:37 ERROR com.emiloanmanagement.dao.CustomerDao - Failed to save customer data
+2025-12-31 15:12:37 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:12:37 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:12:37 INFO  com.emiloanmanagement.dao.CustomerDao - Customer stored successfully
+2025-12-31 15:14:37 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:14:37 ERROR com.emiloanmanagement.dao.CustomerDao - Failed to save customer data
+2025-12-31 15:14:37 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:14:37 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:14:37 INFO  com.emiloanmanagement.dao.CustomerDao - Customer stored successfully
+2025-12-31 15:21:53 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:21:53 ERROR com.emiloanmanagement.dao.CustomerDao - Failed to save customer data
+2025-12-31 15:21:53 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:21:53 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:21:53 INFO  com.emiloanmanagement.dao.CustomerDao - Customer stored successfully
+2025-12-31 15:48:39 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:48:39 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:48:39 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 15:48:39 INFO  com.emiloanmanagement.dao.CustomerDao - Customer stored successfully
+2025-12-31 16:01:54 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 16:01:54 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 16:01:54 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 16:03:52 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 16:03:52 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 16:03:52 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 16:26:15 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 16:26:15 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query
+2025-12-31 16:26:15 INFO  com.emiloanmanagement.dao.CustomerDao - Establishing Sql query

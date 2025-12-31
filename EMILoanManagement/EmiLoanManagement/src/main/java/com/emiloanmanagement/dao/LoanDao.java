@@ -1,6 +1,7 @@
 package com.emiloanmanagement.dao;
 
 import com.emiloanmanagement.exceptions.LoanPersistenceException;
+import com.emiloanmanagement.exceptions.NothingFoundException;
 import com.emiloanmanagement.model.Loan;
 import com.emiloanmanagement.util.DbConnection;
 import org.slf4j.Logger;
@@ -89,7 +90,7 @@ public class LoanDao {
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch paginated loans", e);
+            throw new NothingFoundException("Failed to fetch paginated loans", e);
         }
 
         return loans;
@@ -108,7 +109,7 @@ public class LoanDao {
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to count loans", e);
+            throw new NothingFoundException("Failed to count loans", e);
         }
 
         return 0;
